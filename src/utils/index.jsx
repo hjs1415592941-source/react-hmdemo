@@ -2,5 +2,5 @@
 // import
 
 import { request } from "./request"
-
-export{request}
+import { getToken,removeToken,setToken } from "./token"
+export{request , getToken,removeToken,setToken}
