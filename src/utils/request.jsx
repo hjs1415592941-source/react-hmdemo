@@ -7,7 +7,7 @@
   // 3.请求响应拦截器
 
   const request=axios.create({
-    baseURL:'',
+    baseURL:'http://geek.itheima.net/v1_0',
     timeout:5000
   })
 

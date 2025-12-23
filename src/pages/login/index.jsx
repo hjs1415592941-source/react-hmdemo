@@ -1,11 +1,24 @@
 import './index.scss'
-import { Card, Form, Input, Button } from 'antd'
+import { Card, Form, Input, Button,message} from 'antd'
 import logo from '@/assets/logo.png'
+import { fetchLogin } from '../../store/modules/user'
+import { useDispatch } from 'react-redux'
+
+import { useNavigate } from 'react-router-dom'
 
 const Login = () => {
-  const onFinish = values => {
-        console.log(values);
-    };
+  const dispatch=useDispatch()
+  const navigate=useNavigate()
+  // 点击登录之后 onFinsh函数调用
+  const onFinish =  async(values) => {
+        console.log(values)
+         await dispatch(fetchLogin(values)) 
+        // await 是等结果拿到了再执行下面操作
+        // 1.跳转到首页
+        navigate('/')
+        // 2.提示一下用户
+         message.success('登录成功')
+    }
 
   return (
     <div className="login">
@@ -15,7 +28,7 @@ const Login = () => {
         <Form validateTrigger="onBlur" onFinish={onFinish}>
           <Form.Item
           
-          name="Phone"
+          name="mobile"
           rules={[{ required: true, message: '请输入手机号!' },
             { pattern:/^1[3-9]\d{9}$/, message: '请输入正确的手机号格式!' }
           ]}
@@ -24,10 +37,10 @@ const Login = () => {
           </Form.Item>
           <Form.Item
          
-          name="Password"
-          rules={[{ required: true, message: '请输入密码!' },{ pattern:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,20}$/, message: '请输入正确的密码格式!' }
+          name="code"
+          rules={[{ required: true, message: '请输入验证码!' }
 ]}>
-            <Input.Password size="large" placeholder="请输入密码" />
+            <Input.Password size="large" placeholder="请输入验证码" />
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" size="large" block>
