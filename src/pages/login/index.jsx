@@ -13,9 +13,9 @@ const Login = () => {
   const onFinish =  async(values) => {
         console.log(values)
          await dispatch(fetchLogin(values)) 
-        // await 是等结果拿到了再执行下面操作
+        // await 是等到成功结果拿到了再执行下面操作
         // 1.跳转到首页
-        navigate('/')
+          navigate('/')
         // 2.提示一下用户
          message.success('登录成功')
     }

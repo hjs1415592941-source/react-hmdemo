@@ -1,10 +1,31 @@
 import Layout from "@/pages/layout";
 import Login from "@/pages/login";
 import { createBrowserRouter } from "react-router-dom";
+import AuthRoute from "../components/AuthRoute";
+import { Children } from "react";
+import Home from "../pages/home";
+import Article from "../pages/Article";
+import Publish from "../pages/publish";
 
 const router = createBrowserRouter([
-  { path: "/", element: <Layout /> },
-  { path: "/login", element: <Login /> },
+  { path: "/", 
+    element:<AuthRoute> <Layout /> </AuthRoute>,
+    children:[
+      {
+      path: "home", 
+      element:<Home />
+      },
+      {
+      path: "article", 
+      element:<Article />
+      },
+      {
+      path: "publish", 
+      element:<Publish />
+      }
+    ]},
+  
+    {   path: "/login", element: <Login /> },
 ]);
 
 export default router;
