@@ -1,4 +1,4 @@
 const Publish=()=>{
-  return <div>home</div>
+  return <div>publish</div>
 }
 export default Publish
