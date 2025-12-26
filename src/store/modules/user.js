@@ -1,9 +1,9 @@
 // 和用户相关的状态管理
 
 import { createSlice } from "@reduxjs/toolkit"
-import { removeToken, request } from "../../utils"
+import { removeToken} from "../../utils"
 import { getToken ,setToken as _setToken } from "../../utils"
-
+import { LoginApi,UserinfoApi } from "../../apis/user"
 const UserStore=createSlice({
   name:'user',
   // 数据状态
@@ -35,7 +35,7 @@ const Userreducers=UserStore.reducer
 // 异步获取token
 const fetchLogin=(loginform)=>{
   return async(dispatch)=>{
-    const res= await request.post('/authorizations',loginform)
+    const res= await LoginApi(loginform)
     
     
     // 存入store
@@ -46,7 +46,7 @@ const fetchLogin=(loginform)=>{
 // 异步获取用户信息
 const fetchUserinfo=()=>{
   return async(dispatch)=>{
-    const res= await request.get('/user/profile')
+    const res= await UserinfoApi()
     // console.log(res.data)
     
     // 存入store
