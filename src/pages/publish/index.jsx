@@ -7,7 +7,8 @@ import {
   Input,
   Upload,
   Space,
-  Select
+  Select,
+  message
 } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import { Link } from 'react-router-dom'
@@ -22,6 +23,7 @@ const { Option } = Select
 
 const Publish = () => {
   const [channelList,setChannelList]=useState([])
+  // 获取频道列表
   useEffect(()=>{
     const getChannnelList= async()=>{
       const res=await getChannelApi()
@@ -29,18 +31,24 @@ const Publish = () => {
     }
     getChannnelList()
   },[])
+
   // 点击form button 回调
+  // 提交表单
+  
+  
   const onFinish=(formdata)=>{
     console.log(formdata);
-
+    // 校验 封面类型type是否和实际相当
+    if(imageList.length !== imageType) return message.warning('图片数量不匹配')
     const {title,content,channel_id}=formdata
     // 处理formdata格式
     const reqData={
       title,
       content,
       cover:{
-        type:0,
-        images:[]
+        type:imageType,
+        images:imageList.map(item=>item.response.data.url)
+        // 图片列表
       },
       channel_id
     }
@@ -118,6 +126,7 @@ const Publish = () => {
               // name 接口字段名
               name='image'
               action='http://geek.itheima.net/v1_0/upload'
+              maxCount={imageType}
             >
               <div style={{ marginTop: 8 }}>
                 <PlusOutlined />
