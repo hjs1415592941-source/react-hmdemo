@@ -16,21 +16,14 @@ import './index.scss'
 import { Editor } from '@tinymce/tinymce-react'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
-import {getChannelApi,createAreticleApi} from '../../apis/article'
-import { useEffect, useState } from 'react'
-
+import {createAreticleApi} from '../../apis/article'
+import {  useState } from 'react'
+import { useChannel } from '../../hooks/usechannel'
 const { Option } = Select
 
 const Publish = () => {
-  const [channelList,setChannelList]=useState([])
-  // 获取频道列表
-  useEffect(()=>{
-    const getChannnelList= async()=>{
-      const res=await getChannelApi()
-      setChannelList(res.data.channels)
-    }
-    getChannnelList()
-  },[])
+  
+  const channelList=useChannel()
 
   // 点击form button 回调
   // 提交表单
