@@ -55,6 +55,13 @@ const Publish = () => {
   const handleChange=(value)=>{
     setimageList(value.fileList)
   }
+
+  // 切换图片类型
+  // 回调函数
+  const [imageType,setimageType]=useState(0)
+   const onTypeChange=(value)=>{
+    setimageType(value.target.value)
+   }
   return (
     <div className="publish">
       <Card
@@ -69,7 +76,7 @@ const Publish = () => {
         <Form
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 16 }}
-          initialValues={{ type: 1 }}
+          initialValues={{ type: 0 }}
           onFinish={onFinish}
         >
           <Form.Item
@@ -93,10 +100,9 @@ const Publish = () => {
                   ))}  
             </Select>
           </Form.Item>
-
            <Form.Item label="封面">
             <Form.Item name="type">
-              <Radio.Group>
+              <Radio.Group onChange={onTypeChange}>
                 <Radio value={1}>单图</Radio>
                 <Radio value={3}>三图</Radio>
                 <Radio value={0}>无图</Radio>
@@ -105,9 +111,7 @@ const Publish = () => {
 
             {/*
             */}
-
-              {/* showUploadList显示上传列表 */}
-            <Upload
+            {imageType > 0 && <Upload
               listType="picture-card"
               showUploadList
               onChange={handleChange}
@@ -118,8 +122,13 @@ const Publish = () => {
               <div style={{ marginTop: 8 }}>
                 <PlusOutlined />
               </div>
-            </Upload>
-          </Form.Item>
+            </Upload>}
+              {/* showUploadList显示上传列表 */}
+            
+          </Form.Item>       
+
+          
+           
        
 
           <Form.Item
