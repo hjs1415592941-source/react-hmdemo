@@ -29,7 +29,7 @@ const Publish = () => {
     }
     getChannnelList()
   },[])
-
+  // 点击form button 回调
   const onFinish=(formdata)=>{
     console.log(formdata);
 
@@ -47,6 +47,13 @@ const Publish = () => {
     // 调用接口
     createAreticleApi(reqData)
     
+  }
+  
+  const [imageList,setimageList]=useState([])
+
+  // 上传回调
+  const handleChange=(value)=>{
+    setimageList(value.fileList)
   }
   return (
     <div className="publish">
@@ -77,6 +84,7 @@ const Publish = () => {
             name="channel_id"
             rules={[{ required: true, message: '请选择文章频道' }]}
           >   
+          {/* value 属性会条件到接口 channelid相等 */}
             <Select placeholder="请选择文章频道" style={{ width: 400 }}>
               {channelList.map(item=>(
                     <Option key={item.id} value={item.id}>
@@ -85,6 +93,35 @@ const Publish = () => {
                   ))}  
             </Select>
           </Form.Item>
+
+           <Form.Item label="封面">
+            <Form.Item name="type">
+              <Radio.Group>
+                <Radio value={1}>单图</Radio>
+                <Radio value={3}>三图</Radio>
+                <Radio value={0}>无图</Radio>
+              </Radio.Group>
+            </Form.Item>
+
+            {/*
+            */}
+
+              {/* showUploadList显示上传列表 */}
+            <Upload
+              listType="picture-card"
+              showUploadList
+              onChange={handleChange}
+              // name 接口字段名
+              name='image'
+              action='http://geek.itheima.net/v1_0/upload'
+            >
+              <div style={{ marginTop: 8 }}>
+                <PlusOutlined />
+              </div>
+            </Upload>
+          </Form.Item>
+       
+
           <Form.Item
             label="内容"
             name="content"
