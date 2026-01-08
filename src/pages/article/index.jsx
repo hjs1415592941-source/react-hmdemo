@@ -6,7 +6,8 @@ import { Table, Tag, Space } from 'antd'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import img404 from '@/assets/error.png'
 import { useChannel } from '../../hooks/usechannel'
-
+import { useEffect, useState } from 'react'
+import {getAreticleApi} from '../../apis/article'
 const { Option } = Select
 const { RangePicker } = DatePicker
 
@@ -15,7 +16,58 @@ const Article = () => {
   // 频道列表
   const channelList=useChannel()
 
+  // 获取文章列表
+  const [articleList,setarticleList]=useState([])
+  // 文章总数
+  const[totalcount,settotalcount]=useState(0)
+ useEffect(() => {
+  const getArticleList = async () => {
+    const res = await getAreticleApi()
+    setarticleList(res.data.results)
+    settotalcount(res.data.total_count)
+  }
+
+  getArticleList()
+}, [])
+
+
+  // 筛选文章
+// 提供请求数据
+  const [reqdata,setreqdata]=useState({
+    status:'',
+    channel_id:'',
+    begin_pubdate:'',
+    end_pubdate:'',
+    page:'1',
+    per_page:'10'
+  })
+
+
+
+  // form 回调数据 获取表格参数
+const onFinish=(FormValue)=>{
+  console.log(FormValue);
+  // 把表单数据放到参数中去
+  setreqdata({
+    ...reqdata,
+    channel_id:FormValue.channel_id,
+    status:FormValue.status,
+    begin_pubdate:FormValue.date[0].format("YYYY-MM-DD"),
+    end_pubdate:FormValue.date[1].format("YYYY-MM-DD")
+  })
+  console.log(reqdata);
+  
+
+}
+
+
   // 准备列数据
+  // 定义枚举
+  const status={
+    1:<Tag color='warning'>待审核</Tag >,
+    2:<Tag color='success'>审核通过</Tag >
+
+  }
   const columns = [
     {
       title: '封面',
@@ -33,7 +85,9 @@ const Article = () => {
     {
       title: '状态',
       dataIndex: 'status',
-      render: data => <Tag color="green">审核通过</Tag>
+      // data 后端返回
+      // data1 戴胜和 2审核通过
+      render: data => status[data]
     },
     {
       title: '发布时间',
@@ -69,20 +123,7 @@ const Article = () => {
     }
   ]
   // 准备表格body数据
-  const data = [
-    {
-      id: '8218',
-      comment_count: 0,
-      cover: {
-        images: [],
-      },
-      like_count: 0,
-      pubdate: '2019-03-11 09:00:00',
-      read_count: 2,
-      status: 2,
-      title: 'wkwebview离线化加载h5资源解决方案'
-    }
-  ]
+  const data = articleList
   return (
     <div>
       <Card
@@ -94,10 +135,10 @@ const Article = () => {
         }
         style={{ marginBottom: 20 }}
       >
-        <Form initialValues={{ status: '' }}>
+        <Form initialValues={{ status: 1 }} onFinish={onFinish}>
           <Form.Item label="状态" name="status">
             <Radio.Group>
-              <Radio value={''}>全部</Radio>
+              <Radio value={1}>全部</Radio>
               <Radio value={0}>草稿</Radio>
               <Radio value={2}>审核通过</Radio>
             </Radio.Group>
@@ -133,7 +174,7 @@ const Article = () => {
       </Card>
       {/* 表格区域 */}
         {/*        */}
-      <Card title={`根据筛选条件共查询到 count 条结果：`}>
+      <Card title={`根据筛选条件共查询到 ${totalcount} 条结果：`}>
         <Table rowKey="id" columns={columns} dataSource={data} />
       </Card>
       

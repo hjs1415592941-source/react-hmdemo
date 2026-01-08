@@ -20,3 +20,13 @@ export function createAreticleApi(data){
     data
   })
 } 
+
+// 获取文章列表
+
+export function getAreticleApi(){
+  return request({
+    url: '/mp/articles',
+    method: 'get',
+  })
+} 
+
