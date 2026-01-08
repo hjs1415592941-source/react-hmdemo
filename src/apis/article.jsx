@@ -30,3 +30,12 @@ export function getAreticleApi(){
   })
 } 
 
+
+// 删除文章列表
+
+export function deleteAreticleApi(id){
+  return request({
+    url: `/mp/articles/${id}`,
+    method: 'DELETE',
+  })
+} 

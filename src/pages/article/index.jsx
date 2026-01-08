@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Card, Breadcrumb, Form, Button, Radio, DatePicker, Select } from 'antd'
+import { Card, Breadcrumb, Form, Button, Radio, DatePicker, Select, Popconfirm } from 'antd'
 // 引入汉化包 让时间选择器显示中文
 import locale from 'antd/es/date-picker/locale/zh_CN'
 import { Table, Tag, Space } from 'antd'
@@ -10,39 +10,38 @@ import { useEffect, useState } from 'react'
 import {getAreticleApi} from '../../apis/article'
 const { Option } = Select
 const { RangePicker } = DatePicker
-
+import {deleteAreticleApi} from '../../apis/article'
 
 const Article = () => {
   // 频道列表
   const channelList=useChannel()
 
+  // 筛选文章
+  // 提供请求数据
+    const [reqdata,setreqdata]=useState({
+      status:'',
+      channel_id:'',
+      begin_pubdate:'',
+      end_pubdate:'',
+      page:1,
+      per_page:4
+    })
+
+
   // 获取文章列表
   const [articleList,setarticleList]=useState([])
   // 文章总数
   const[totalcount,settotalcount]=useState(0)
+  // reqdata变化重新拉取数据
  useEffect(() => {
   const getArticleList = async () => {
-    const res = await getAreticleApi()
+    const res = await getAreticleApi(reqdata)
     setarticleList(res.data.results)
     settotalcount(res.data.total_count)
   }
 
   getArticleList()
-}, [])
-
-
-  // 筛选文章
-// 提供请求数据
-  const [reqdata,setreqdata]=useState({
-    status:'',
-    channel_id:'',
-    begin_pubdate:'',
-    end_pubdate:'',
-    page:'1',
-    per_page:'10'
-  })
-
-
+}, [reqdata])
 
   // form 回调数据 获取表格参数
 const onFinish=(FormValue)=>{
@@ -55,12 +54,26 @@ const onFinish=(FormValue)=>{
     begin_pubdate:FormValue.date[0].format("YYYY-MM-DD"),
     end_pubdate:FormValue.date[1].format("YYYY-MM-DD")
   })
-  console.log(reqdata);
-  
-
+  console.log(reqdata)
 }
 
+  // 页面导航回调数据
+  const onpageChange=(page)=>{
+      setreqdata(prev => ({
+    ...prev,
+    page
+  }))
+  }
 
+  // 确认删除回调id
+  const confirm=async(data)=>{
+    console.log(data.id);
+    await deleteAreticleApi(data.id)
+    // 重新渲染
+    setreqdata({
+      ...reqdata
+    })
+  }
   // 准备列数据
   // 定义枚举
   const status={
@@ -107,16 +120,26 @@ const onFinish=(FormValue)=>{
     },
     {
       title: '操作',
-      render: data => {
+      render: (data) => {
         return (
           <Space size="middle">
             <Button type="primary" shape="circle" icon={<EditOutlined />} />
-            <Button
+            <Popconfirm
+              title="删除文章"
+              description="确定要删除文章吗"
+              onConfirm={()=>confirm(data)}
+              okText="Yes"
+              cancelText="No"
+            
+            >
+              <Button
               type="primary"
               danger
               shape="circle"
               icon={<DeleteOutlined />}
             />
+            </Popconfirm>
+            
           </Space>
         )
       }
@@ -175,7 +198,12 @@ const onFinish=(FormValue)=>{
       {/* 表格区域 */}
         {/*        */}
       <Card title={`根据筛选条件共查询到 ${totalcount} 条结果：`}>
-        <Table rowKey="id" columns={columns} dataSource={data} />
+        <Table rowKey="id" columns={columns} dataSource={data} 
+        pagination={{
+          total:totalcount,
+          pageSize:reqdata.per_page,
+          onChange:onpageChange
+        }}/>
       </Card>
       
     </div>
